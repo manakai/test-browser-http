@@ -101,9 +101,11 @@ my $p = promised_cleanup {
         return $result2_file->write_char_string (join "\n", $cmd_err, $e)->then (sub {
           return $session->execute (q{
             return document.documentElement.outerHTML;
-          });
+          }) if defined $session;
+          return undef;
         })->then (sub {
           my $res = $_[0];
+          return unless defined $res;
           my $result_path = $OutPath->child
               ($Browser, 'FAIL', $proto, $name . '.html');
           my $result_file = Promised::File->new_from_path ($result_path);
