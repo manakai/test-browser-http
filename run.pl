@@ -28,9 +28,11 @@ my $p = promised_cleanup {
   my $con = Web::Driver::Client::Connection->new_from_url
       (Web::URL->parse_string ($prefix));
   my $host = $wd->get_docker_host_hostname_for_container;
+  my $exit;
   return promised_cleanup {
     return $con->close;
   } promised_for {
+    return if $exit;
     my $path = shift;
     my $name = $path->relative ($TestDataPath);
     warn "$name...\n";
@@ -58,7 +60,9 @@ my $p = promised_cleanup {
         return $cmd_err =~ /^Listening.+:$HttpPort/m;
       } timeout => 60;
     })->then (sub {
-      return $session->go (Web::URL->parse_string (qq<http://$host:$HttpPort>));
+      my $server_url = Web::URL->parse_string (qq<http://$host:$HttpPort>);
+      warn "Server <@{[$server_url->stringify]}> is ready\n";
+      return $session->go ($server_url);
     })->then (sub {
       return promised_timeout {
         return $cmd->wait;
@@ -77,7 +81,7 @@ my $p = promised_cleanup {
       my $e = $_[0];
       my $result2_path = $OutPath->child ($Browser, $name . '-error.txt');
       my $result2_file = Promised::File->new_from_path ($result2_path);
-      return $result2_file->write_char_string ($e)->then (sub {
+      return $result2_file->write_char_string (join "\n", $cmd_err, $e)->then (sub {
         return $session->execute (q{
           return document.documentElement.outerHTML;
         });
@@ -87,8 +91,10 @@ my $p = promised_cleanup {
         my $result_file = Promised::File->new_from_path ($result_path);
         return $result_file->write_char_string ($res->json->{value});
       });
+    })->then (sub {
+      $exit = 1 if $ENV{DEBUG};
     });
-  } [($TestDataPath->children (qr/\.dat$/))];
+  } [(sort { $a cmp $b } $TestDataPath->children (qr/\.dat$/))];
 });
 $p->to_cv->recv;
 
