@@ -1,5 +1,3 @@
-# -*- Makefile -*-
-
 all:
 
 WGET = wget
@@ -14,7 +12,10 @@ updatenightly: local/bin/pmbp.pl
 
 ## ------ Setup ------
 
-deps: git-submodules pmbp-install
+deps: git-submodules pmbp-install http-test-deps
+
+http-test-deps:
+	cd modules/web-resource && $(MAKE) test-deps
 
 git-submodules:
 	$(GIT) submodule update --init
@@ -35,13 +36,14 @@ pmbp-install: pmbp-upgrade
 
 ## ------ Tests ------
 
-PROVE = ./prove
-
 test: test-deps test-main
 
 test-deps: deps
 
+PERL = ./perl
+
 test-main:
-	$(PROVE) t/*.t
+	TEST_WD_BROWSER=chromium $(PERL) run.pl
+	TEST_WD_BROWSER=firefox $(PERL) run.pl
 
 ## License: Public Domain.
