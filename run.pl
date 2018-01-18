@@ -33,6 +33,7 @@ my $p = promised_cleanup {
   } promised_for {
     my $path = shift;
     my $name = $path->relative ($TestDataPath);
+    warn "$name...\n";
 
     my $cmd = Promised::Command->new ([
       $HttpPath->child ('perl'),
@@ -58,7 +59,7 @@ my $p = promised_cleanup {
       my $result_file = Promised::File->new_from_path ($result_path);
       return $result_file->write_char_string ($res->json->{value});
     });
-  } ($TestDataPath->children (qr/\.dat$/));
+  } [($TestDataPath->children (qr/\.dat$/))];
 });
 $p->to_cv->recv;
 
