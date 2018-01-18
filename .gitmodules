@@ -5,7 +5,7 @@
 [submodule "modules/web-resource"]
 	path = modules/web-resource
 	url = https://github.com/manakai/perl-web-resource
-	track = master
+	track = transport
 [submodule "modules/promise"]
 	path = modules/promise
 	url = https://github.com/wakaba/perl-promise
@@ -32,7 +32,7 @@
 	track = master
 [submodule "modules/promise.2"]
 	path = modules/promise.2
-	url = https://github.com/wakaba/perl-promise
+	url = git://github.com/wakaba/perl-promise
 	track = master
 [submodule "modules/json-ps"]
 	path = modules/json-ps
@@ -53,3 +53,12 @@
 [submodule "modules/promised-command"]
 	path = modules/promised-command
 	url = https://github.com/wakaba/perl-promised-command
+[submodule "modules/promised-docker-webdriver"]
+	path = modules/promised-docker-webdriver
+	url = https://github.com/wakaba/perl-promised-docker-webdriver
+[submodule "modules/promised-command.2"]
+	path = modules/promised-command.2
+	url = git://github.com/wakaba/perl-promised-command
+[submodule "modules/promised-file"]
+	path = modules/promised-file
+	url = https://github.com/wakaba/perl-promised-file
