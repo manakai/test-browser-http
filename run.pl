@@ -68,14 +68,18 @@ my $p = promised_cleanup {
       return $result_file->write_char_string ($res->json->{value});
     }, sub {
       my $e = $_[0];
-      my $result_path = $OutPath->child ($Browser, $name . '.html');
       my $result2_path = $OutPath->child ($Browser, $name . '-error.txt');
-      my $result_file = Promised::File->new_from_path ($result_path);
       my $result2_file = Promised::File->new_from_path ($result2_path);
-      return Promise->all ([
-        $result_file->write_char_string ($res->json->{value}),
-        $result2_file->write_char_string ($e),
-      ]);
+      return $result2_file->write_char_string ($e)->then (sub {
+        return $session->execute (q{
+          return document.documentElement.outerHTML;
+        });
+      })->then (sub {
+        my $res = $_[0];
+        my $result_path = $OutPath->child ($Browser, $name . '.html');
+        my $result_file = Promised::File->new_from_path ($result_path);
+        return $result_file->write_char_string ($res->json->{value});
+      });
     });
   } [($TestDataPath->children (qr/\.dat$/))];
 });
