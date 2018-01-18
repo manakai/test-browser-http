@@ -69,17 +69,22 @@ my $p = promised_cleanup {
       } 60*3;
     })->then (sub {
       return $session->execute (q{
-        return document.documentElement.outerHTML;
+        return [
+          document.documentElement.outerHTML,
+          document.querySelectorAll ("tbody tr.PASS"),
+          document.querySelectorAll ("tbody tr:not(.PASS)"),
+        ];
       });
     })->then (sub {
       my $res = $_[0];
-      # XXX result detection
-      my $result_path = $OutPath->child ($Browser, $name . '.html');
+      my $status = ($res->json->{value}->[1] > 0 &&
+                    $res->json->{value}->[2] == 0) ? 'PASS' : 'FAIL';
+      my $result_path = $OutPath->child ($Browser, $status, $name . '.html');
       my $result_file = Promised::File->new_from_path ($result_path);
-      return $result_file->write_char_string ($res->json->{value});
+      return $result_file->write_char_string ($res->json->{value}->[0]);
     }, sub {
       my $e = $_[0];
-      my $result2_path = $OutPath->child ($Browser, $name . '-error.txt');
+      my $result2_path = $OutPath->child ($Browser, 'FAIL', $name . '-error.txt');
       my $result2_file = Promised::File->new_from_path ($result2_path);
       return $result2_file->write_char_string (join "\n", $cmd_err, $e)->then (sub {
         return $session->execute (q{
@@ -87,7 +92,7 @@ my $p = promised_cleanup {
         });
       })->then (sub {
         my $res = $_[0];
-        my $result_path = $OutPath->child ($Browser, $name . '.html');
+        my $result_path = $OutPath->child ($Browser, 'FAIL', $name . '.html');
         my $result_file = Promised::File->new_from_path ($result_path);
         return $result_file->write_char_string ($res->json->{value});
       });
