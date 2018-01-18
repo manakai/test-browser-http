@@ -42,22 +42,40 @@ my $p = promised_cleanup {
     $cmd->envs->{SERVER_PORT} = $HttpPort;
     $cmd->envs->{SERVER_TLS_PORT} = $HttpsPort;
     $cmd->envs->{TEST_METHOD} = quotemeta $name;
+    my $cmd_err = '';
+    $cmd->onstderr (sub {
+      $cmd_err .= $_[0] if defined $_[0];
+    });
     return $cmd->run->then (sub {
-      return $cmd->wait;
+      return promised_wait_until {
+        return $cmd_err =~ /^Listening.+:$HttpPort/m;
+      } timeout => 60;
     })->then (sub {
       return $session->go (Web::URL->parse_string (qq<http://$host:$HttpPort>));
     })->then (sub {
-# XXXXX
-# XXX wait
-# XXX timeout
+      return promised_timeout {
+        return $cmd->wait;
+      } 60*3;
+    })->then (sub {
       return $session->execute (q{
         return document.documentElement.outerHTML;
       });
     })->then (sub {
       my $res = $_[0];
+      # XXX result detection
       my $result_path = $OutPath->child ($Browser, $name . '.html');
       my $result_file = Promised::File->new_from_path ($result_path);
       return $result_file->write_char_string ($res->json->{value});
+    }, sub {
+      my $e = $_[0];
+      my $result_path = $OutPath->child ($Browser, $name . '.html');
+      my $result2_path = $OutPath->child ($Browser, $name . '-error.txt');
+      my $result_file = Promised::File->new_from_path ($result_path);
+      my $result2_file = Promised::File->new_from_path ($result2_path);
+      return Promise->all ([
+        $result_file->write_char_string ($res->json->{value}),
+        $result2_file->write_char_string ($e),
+      ]);
     });
   } [($TestDataPath->children (qr/\.dat$/))];
 });
