@@ -1,0 +1,34 @@
+machine:
+  services:
+    - docker
+dependencies:
+  cache_directories:
+    - local
+    - deps
+  override:
+    - docker info
+    - docker pull quay.io/wakaba/firefoxdriver:stable :
+        background: true
+        timeout: 600
+    - docker pull quay.io/wakaba/chromedriver:chromium :
+        background: true
+        timeout: 600
+
+    - make deps:
+        timeout: 600
+
+test:
+  override:
+    - make test:
+        parallel: true
+        timeout: 600
+
+deployment:
+  nightly:
+    branch: nightly
+    commands:
+      - curl -f -s -S --request POST --header "Authorization:token $GITHUB_ACCESS_TOKEN" --header "Content-Type:application/json" --data-binary "{\"base\":\"staging\",\"head\":\"`git rev-parse HEAD`\",\"commit_message\":\"auto-merge nightly into staging\"}" "https://api.github.com/repos/manakai/test-browser-http/merges"
+  staging:
+    branch: staging
+    commands:
+      - curl -f -s -S --request POST --header "Authorization:token $GITHUB_ACCESS_TOKEN" --header "Content-Type:application/json" --data-binary "{\"base\":\"master\",\"head\":\"`git rev-parse HEAD`\",\"commit_message\":\"auto-merge staging into master\"}" "https://api.github.com/repos/manakai/test-browser-http/merges"
