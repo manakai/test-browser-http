@@ -48,6 +48,7 @@ my $p = promised_cleanup {
     $cmd->stderr (sub {
       $cmd_err .= $_[0] if defined $_[0];
     });
+    $cmd->timeout (60*3);
     my $session;
     return promised_cleanup {
       return $session->close;
@@ -61,12 +62,12 @@ my $p = promised_cleanup {
       } timeout => 60;
     })->then (sub {
       my $server_url = Web::URL->parse_string (qq<http://$host:$HttpPort>);
-      warn "Server <@{[$server_url->stringify]}> is ready\n";
+      #warn "Server <@{[$server_url->stringify]}> is ready\n";
       return $session->go ($server_url);
     })->then (sub {
-      return promised_timeout {
-        return $cmd->wait;
-      } 60*3;
+      return $cmd->wait;
+    })->then (sub {
+      die $_[0] unless $_[0]->exit_code == 0;
     })->then (sub {
       return $session->execute (q{
         return [
