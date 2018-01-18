@@ -25,11 +25,11 @@ my $p = promised_cleanup {
   return $wd->stop;
 } $wd->start->then (sub {
   my $prefix = $wd->get_url_prefix;
-  my $session = Web::Driver::Client::Connection->new_from_url
+  my $con = Web::Driver::Client::Connection->new_from_url
       (Web::URL->parse_string ($prefix));
   my $host = $wd->get_docker_host_hostname_for_container;
   return promised_cleanup {
-    return $session->close;
+    return $con->close;
   } promised_for {
     my $path = shift;
     my $name = $path->relative ($TestDataPath);
@@ -43,10 +43,17 @@ my $p = promised_cleanup {
     $cmd->envs->{SERVER_TLS_PORT} = $HttpsPort;
     $cmd->envs->{TEST_METHOD} = quotemeta $name;
     my $cmd_err = '';
-    $cmd->onstderr (sub {
+    $cmd->stderr (sub {
       $cmd_err .= $_[0] if defined $_[0];
     });
-    return $cmd->run->then (sub {
+    my $session;
+    return promised_cleanup {
+      return $session->close;
+    } Promise->all ([
+      $cmd->run,
+      $con->new_session,
+    ])->then (sub {
+      $session = $_[0]->[1];
       return promised_wait_until {
         return $cmd_err =~ /^Listening.+:$HttpPort/m;
       } timeout => 60;
