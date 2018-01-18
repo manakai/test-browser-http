@@ -72,8 +72,8 @@ my $p = promised_cleanup {
       return $session->execute (q{
         return [
           document.documentElement.outerHTML,
-          document.querySelectorAll ("tbody tr.PASS"),
-          document.querySelectorAll ("tbody tr:not(.PASS)"),
+          document.querySelectorAll ("tbody tr.PASS").length,
+          document.querySelectorAll ("tbody tr:not(.PASS)").length,
         ];
       });
     })->then (sub {
