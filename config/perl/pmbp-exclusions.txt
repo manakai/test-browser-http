@@ -11,3 +11,6 @@
 - "../../modules/web-datetime.2" build tests
 - "../../modules/streams" build tests
 - "../../modules/promised-command" build tests
+- "../../modules/promise.2" build tests
+- "../../modules/promised-command.2" build tests
+- "../../modules/promised-file" build tests
