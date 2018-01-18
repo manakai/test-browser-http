@@ -96,6 +96,8 @@ my $p = promised_cleanup {
         my $result_path = $OutPath->child ($Browser, 'FAIL', $name . '.html');
         my $result_file = Promised::File->new_from_path ($result_path);
         return $result_file->write_char_string ($res->json->{value});
+      })->catch (sub {
+        warn $_[0];
       });
     })->then (sub {
       $exit = 1 if $ENV{DEBUG};

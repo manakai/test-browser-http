@@ -5,6 +5,7 @@ dependencies:
   cache_directories:
     - local
     - deps
+    - modules/web-resource/local
   override:
     - docker info
     - docker pull quay.io/wakaba/firefoxdriver:stable :
