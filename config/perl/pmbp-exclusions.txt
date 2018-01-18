@@ -1,0 +1,13 @@
+
+- "../../modules/web-resource" build tests
+- "../../modules/promise" build tests
+- "../../modules/web-url" build tests
+- "../../modules/web-encodings" build tests
+- "../../modules/web-encodings.2" build tests
+- "../../modules/web-datetime" build tests
+- "../../modules/web-url.2" build tests
+- "../../modules/promise.2" build tests
+- "../../modules/json-ps" build tests
+- "../../modules/web-datetime.2" build tests
+- "../../modules/streams" build tests
+- "../../modules/promised-command" build tests

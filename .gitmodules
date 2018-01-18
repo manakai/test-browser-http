@@ -1,0 +1,55 @@
+[submodule "modules/web-driver-client"]
+	path = modules/web-driver-client
+	url = https://github.com/manakai/perl-web-driver-client
+	track = master
+[submodule "modules/web-resource"]
+	path = modules/web-resource
+	url = https://github.com/manakai/perl-web-resource
+	track = master
+[submodule "modules/promise"]
+	path = modules/promise
+	url = https://github.com/wakaba/perl-promise
+	track = master
+[submodule "modules/web-url"]
+	path = modules/web-url
+	url = https://github.com/manakai/perl-web-url
+	track = master
+[submodule "modules/web-encodings"]
+	path = modules/web-encodings
+	url = https://github.com/manakai/perl-web-encodings
+	track = master
+[submodule "modules/web-encodings.2"]
+	path = modules/web-encodings.2
+	url = https://github.com/manakai/perl-web-encodings
+	track = master
+[submodule "modules/web-datetime"]
+	path = modules/web-datetime
+	url = https://github.com/manakai/perl-web-datetime
+	track = master
+[submodule "modules/web-url.2"]
+	path = modules/web-url.2
+	url = https://github.com/manakai/perl-web-url
+	track = master
+[submodule "modules/promise.2"]
+	path = modules/promise.2
+	url = https://github.com/wakaba/perl-promise
+	track = master
+[submodule "modules/json-ps"]
+	path = modules/json-ps
+	url = https://github.com/wakaba/perl-json-ps
+	track = master
+[submodule "modules/web-datetime.2"]
+	path = modules/web-datetime.2
+	url = https://github.com/manakai/perl-web-datetime
+	track = master
+[submodule "modules/streams"]
+	path = modules/streams
+	url = https://github.com/manakai/perl-streams
+	track = master
+[submodule "modules/test-x1"]
+	path = modules/test-x1
+	url = https://github.com/wakaba/perl-test-x1
+	track = master
+[submodule "modules/promised-command"]
+	path = modules/promised-command
+	url = https://github.com/wakaba/perl-promised-command
