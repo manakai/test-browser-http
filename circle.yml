@@ -19,9 +19,12 @@ dependencies:
 
 test:
   override:
-    - make test:
+    - make test WD_BROWSER=chromium :
         parallel: true
-        timeout: 600
+        timeout: 6000
+    - make test WD_BROWSER=firefox :
+        parallel: true
+        timeout: 6000
 
 deployment:
   nightly:

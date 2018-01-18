@@ -41,9 +41,9 @@ test: test-deps test-main
 test-deps: deps
 
 PERL = ./perl
+WD_BROWSER = chromium
 
 test-main:
-	TEST_WD_BROWSER=chromium $(PERL) run.pl
-	TEST_WD_BROWSER=firefox $(PERL) run.pl
+	TEST_WD_BROWSER="$(WD_BROWSER)" $(PERL) run.pl
 
 ## License: Public Domain.
