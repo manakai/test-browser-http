@@ -21,10 +21,10 @@ dependencies:
 test:
   override:
     # XXXX
-    - DEBUG=1 make test WD_BROWSER=chromium :
+    - DEBUG=0 make test WD_BROWSER=chromium :
         parallel: true
         timeout: 6000
-    - DEBUG=1 make test WD_BROWSER=firefox :
+    - DEBUG=0 make test WD_BROWSER=firefox :
         parallel: true
         timeout: 6000
 
