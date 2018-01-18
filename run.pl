@@ -48,6 +48,9 @@ my $p = promised_cleanup {
       $cmd->envs->{SERVER_PORT} = $Port->{http};
       $cmd->envs->{SERVER_TLS_PORT} = $Port->{https};
       $cmd->envs->{TEST_METHOD} = quotemeta $name;
+      if ($ENV{DEBUG} and $ENV{TEST_METHOD}) {
+        $cmd->envs->{TEST_METHOD} = $ENV{TEST_METHOD};
+      }
       my $cmd_err = '';
       $cmd->stderr (sub {
         $cmd_err .= $_[0] if defined $_[0];
@@ -58,7 +61,9 @@ my $p = promised_cleanup {
         return $session->close;
       } Promise->all ([
         $cmd->run,
-        $con->new_session,
+        $con->new_session (required => {
+          acceptInsecureCerts => \1,
+        }),
       ])->then (sub {
         $session = $_[0]->[1];
         return promised_wait_until {
