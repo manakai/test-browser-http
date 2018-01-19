@@ -58,7 +58,7 @@ my $p = promised_cleanup {
       $cmd->timeout (60*3);
       my $session;
       return promised_cleanup {
-        return $session->close;
+        return $session->close if defined $session;
       } Promise->all ([
         $cmd->run,
         $con->new_session (required => {
