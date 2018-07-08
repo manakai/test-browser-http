@@ -1,0 +1,18 @@
+{
+  "circleci": {
+    "required_docker_images": [
+      "quay.io/wakaba/firefoxdriver:stable",
+      "docker pull quay.io/wakaba/chromedriver:chromium"
+    ],
+    "merger": 1,
+    "gaa": 1,
+
+    "build": [
+      "make test-deps"
+    ],
+    "tests": [
+      "DEBUG=0 make test WD_BROWSER=chromium",
+      "DEBUG=0 make test WD_BROWSER=firefox"
+    ]
+  }
+}
